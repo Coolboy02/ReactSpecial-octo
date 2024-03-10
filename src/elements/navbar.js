@@ -13,7 +13,7 @@ function NavBarElem() {
           <Nav className="me-auto">
             <Nav.Link href="home">Home</Nav.Link>
             <Nav.Link href="forms">APODs</Nav.Link>
-            <Nav.Link href="#home">Source Code</Nav.Link>
+            <Nav.Link href="https://github.com/Coolboy02/ReactSpecial-octo">Source Code</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

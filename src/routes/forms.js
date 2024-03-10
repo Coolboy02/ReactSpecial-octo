@@ -79,7 +79,7 @@ function FormsPage() {
     };
 
     return (
-        <Container className="justify-content-center">
+        <Container fluid className="justify-content-center">
             <Row className="justify-content-center">
                 <Col >
                     <Form onSubmit={handleSubmit}>
@@ -124,47 +124,73 @@ function FormsPage() {
                 </Col>
             </Row>
             <Row>
-                <Col>
-                    {results && selectedForm === 'form1' && (
-                        <div className="results-container">
-                            <div className="image-container">
-                                <img src={results.url} alt={results.title} style={{ width: '100%' }} />
-                            </div>
-                            <div className="data-container">
-                                <h3>{results.title}</h3>
-                                <p><strong>Date:</strong> {results.date}</p>
-                                {results.copyrigt && <p><strong>Copyright:</strong> {results.copyrigt}</p>}
-                                <p><strong>Explanation:</strong> {results.explanation}</p>
-                                {results.hdurl && <p><strong>HD URL:</strong> <a href={results.hdurl} target="_blank">View HD Image</a></p>}
-                                {results.media_type && <p><strong>Media Type:</strong> {results.media_type}</p>}
-                                {results.service_version && <p><strong>Service Version:</strong> {results.service_version}</p>}
-                            </div>
-                        </div>
-                    )}
-                    {results && (selectedForm === 'form2' || selectedForm === 'form3') && (
-                        <div className="card-group-custom">
-                            {results.map((result, index) => (
-                                <Card key={index}>
-                                    <Card.Img variant="top" src={result.url || result.hdurl} alt="APOD" />
-                                    <Card.Body>
-                                        <Card.Title>{result.title}</Card.Title>
-                                        <Card.Text>
-                                            <strong>Date:</strong> {result.date}<br />
-                                            {result.copyrigt && <><strong>Copyright:</strong> {result.copyrigt}<br /></>}
-                                            <strong>Explanation:</strong> {result.explanation}<br />
-                                            {result.hdurl && <><strong>HD URL:</strong> <a href={result.hdurl} target="_blank">View HD Image</a><br /></>}
-                                            {result.media_type && <><strong>Media Type:</strong> {result.media_type}<br /></>}
-                                            {result.service_version && <><strong>Service Version:</strong> {result.service_version}</>}
-                                        </Card.Text>
-                                    </Card.Body>
-                                    <Card.Footer>
-                                        <small className="text-muted">Posted on {result.date}</small>
-                                    </Card.Footer>
-                                </Card>
-                            ))}
-                        </div>
-                    )}
-                </Col>
+            <Col style={{ 
+            background: selectedForm === 'form1' && results ? `url(${results.url}) no-repeat center center` : 'none', 
+            backgroundSize: 'cover' 
+        }}>
+          {results && selectedForm === 'form1' && results.media_type === "video" ? (
+            <iframe
+              title="NASA Video"
+              src={results.url}
+              frameBorder="0"
+              gesture="media"
+              allow="encrypted-media"
+              allowFullScreen
+              style={{ width: '100%', height: '100%' }}
+            ></iframe>
+          ) : null}
+          {results && selectedForm === 'form1' &&
+                              <div className="results-container justify-content-center" style={{backgroundColor:"rgb(240,240,240,0.4)"}} >
+                                  <div className="data-container">
+                                      <h3>{results.title}</h3>
+                                      <p><strong>Date:</strong> {results.date}</p>
+                                      {results.copyrigt && <p><strong>Copyright:</strong> {results.copyrigt}</p>}
+                                      <p><strong>Explanation:</strong> {results.explanation}</p>
+                                      {results.hdurl && <p><strong>HD URL:</strong> <a href={results.hdurl} target="_blank">View HD Image</a></p>}
+                                      {results.media_type && <p><strong>Media Type:</strong> {results.media_type}</p>}
+                                      {results.service_version && <p><strong>Service Version:</strong> {results.service_version}</p>}
+                                  </div>
+                              </div>
+                          
+      
+}
+          {results && (selectedForm === 'form2' || selectedForm === 'form3') && (
+            <div className="card-group-custom">
+              {results.map((result, index) => (
+                <Card key={index}>
+                    {result.media_type === "video" ? (
+                      <iframe
+                        title="NASA Video"
+                        src={result.url}
+                        frameBorder="0"
+                        gesture="media"
+                        allow="encrypted-media"
+                        allowFullScreen
+                        style={{ width: '100%', height: '100%' }}
+                      ></iframe>
+                    ) : <Card.Img variant="top" src={result.url || result.hdurl} alt="APOD" />}
+                  
+                  <Card.Body>
+                    <Card.Title>{result.title}</Card.Title>
+                    <Card.Text>
+                    {result.copyrigt && <p><strong>Copyright:</strong> {result.copyrigt}</p>}
+                      {result.hdurl && <p><strong>HD URL:</strong> <a href={result.hdurl} target="_blank">View HD Image</a></p>}
+                    {result.media_type && <p><strong>Media Type:</strong> {result.media_type}</p>}
+                    {result.service_version && <p><strong>Service Version:</strong> {result.service_version}</p>}
+                      {result.explanation}
+                      
+                                               
+                    </Card.Text>
+                    
+                  </Card.Body>
+                  <Card.Footer>
+                    <small className="text-muted">{result.date}</small>
+                  </Card.Footer>
+                </Card>
+              ))}
+            </div>
+          )}
+        </Col>
             </Row>
 
         </Container>
