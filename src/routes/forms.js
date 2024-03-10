@@ -9,60 +9,72 @@ function FormsPage() {
     const [formData, setFormData] = useState({ date: today }); // Default date to today
     const [results, setResults] = useState(null);
 
-    // Function to build API URL based on form data
-    const buildApiUrl = () => {
+    const fetchLocalApodData = async () => {
         const apiKey = "Epi0Oq0qLq0OP1HYN7N01IXazaijyh7FhJFQdlHs";
-        let baseUrl = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}`;
-
+        let baseUrl = `http://localhost:3030/pod`;
+    
         if (formData.date) {
-            baseUrl += `&date=${formData.date}`;
+          baseUrl += `&date=${formData.date}`;
         } else if (formData.count) {
-            baseUrl += `&count=${formData.count}`;
+          baseUrl += `&count=${formData.count}`;
         } else if (formData.startDate && formData.endDate) {
-            baseUrl += `&start_date=${formData.startDate}&end_date=${formData.endDate}`;
+          baseUrl += `&start_date=${formData.startDate}&end_date=${formData.endDate}`;
         }
-
-        return baseUrl;
-    };
-
-    const fetchApodData = async (data) => {
-        const apiUrl = buildApiUrl(data);
+        
         try {
-            const response = await fetch(apiUrl);
+          const response = await fetch(baseUrl);
+          if (response.ok) { // Checks if status is 200-299
             const data = await response.json();
             setResults(data);
+            return true; // Indicate success
+          }
         } catch (error) {
-            console.error("Failed to fetch APOD data:", error);
+          console.error("Failed to fetch from local API:", error);
         }
-    };
-
-    useEffect(() => {
-        // Fetch APOD data for today when component mounts
-        fetchApodData({ date: today });
-    }, []); // Empty dependency array means this effect runs once on mount
-
-
-    // Handling form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const apiUrl = buildApiUrl();
-
+        return false; // Indicate failure
+      };
+    
+      const buildNasaApiUrl = () => {
+        const apiKey = "Epi0Oq0qLq0OP1HYN7N01IXazaijyh7FhJFQdlHs";
+        let baseUrl = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}`;
+    
+        if (formData.date) {
+          baseUrl += `&date=${formData.date}`;
+        } else if (formData.count) {
+          baseUrl += `&count=${formData.count}`;
+        } else if (formData.startDate && formData.endDate) {
+          baseUrl += `&start_date=${formData.startDate}&end_date=${formData.endDate}`;
+        }
+    
+        return baseUrl;
+      };
+    
+      const fetchNasaApodData = async () => {
+        const apiUrl = buildNasaApiUrl();
         try {
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            // If count or range is used, data will be an array
-            if (Array.isArray(data)) {
-                setResults(data);
-            } else {
-                // Single APOD result
-                setResults(data); // Wrap in array for consistency
-            }
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+          setResults(data);
         } catch (error) {
-            console.error("Failed to fetch APOD data:", error);
-            setResults(null);
+          console.error("Failed to fetch from NASA APOD API:", error);
         }
-        // alert(data);
-    }
+      };
+    
+      const fetchApodData = async (data) => {
+        const localFetchSuccess = await fetchLocalApodData();
+        if (!localFetchSuccess) {
+          fetchNasaApodData(data);
+        }
+      };
+    
+      useEffect(() => {
+        fetchApodData({ date: today });
+      }, []);
+    
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        fetchApodData(formData);
+      };
 
     const handleFormSelection = (e) => {
         setSelectedForm(e.target.value);
