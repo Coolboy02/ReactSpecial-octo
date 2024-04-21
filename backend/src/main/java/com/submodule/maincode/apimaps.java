@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+
 
 import com.submodule.maincode.service.externalcall;
 
@@ -24,6 +26,15 @@ public class apimaps {
         externalcall externalcallObj =  new externalcall();
         return externalcallObj.getNASAPOD(date,start_date, end_date,count, thumbs);
     }
-        
-        
+
+    
+}
+
+
+@Controller
+class HomeController {
+    @GetMapping(value = {"/", "/home", "/forms"})
+    public String index(){
+        return "index";
+    }
 }

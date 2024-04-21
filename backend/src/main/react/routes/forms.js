@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Form, Button, Container, Row, Col } from 'react-bootstrap';
+import useStore from '../resources/store';
 
 function FormsPage() {
-    const today = new Date().toISOString().split('T')[0];
+    // const today = new Date().toISOString().split('T')[0];
     // alert(today);
 
-    const [selectedForm, setSelectedForm] = useState('form1'); // Default to form1
-    const [formData, setFormData] = useState({ date: today }); // Default date to today
-    const [results, setResults] = useState(null);
+    const selectedForm = useStore(state => state.selectedForm);
+    const setSelectedForm = useStore(state => state.setSelectedForm);
+    const formData = useStore(state => state.formData);
+    const setFormData = useStore(state => state.setFormData);
+    const results = useStore(state => state.results);
+    const setResults = useStore(state => state.setResults);
+    const fetchLocalApodData = useStore(state => state.fetchLocalApodData);
 
+
+    /* 
     const fetchLocalApodData = async () => {
         const apiKey = "Epi0Oq0qLq0OP1HYN7N01IXazaijyh7FhJFQdlHs";
         let baseUrl = `http://localhost:3030/pod`;
@@ -65,15 +72,19 @@ function FormsPage() {
         if (!localFetchSuccess) {
           fetchNasaApodData(data);
         }
-      };
+      }; */
     
+      
       useEffect(() => {
-        fetchApodData({ date: today });
+        if (results === null) {
+          fetchLocalApodData();
+        }
+        // fetchApodData();
       }, []);
-    
+
       const handleSubmit = async (e) => {
         e.preventDefault();
-        fetchApodData(formData);
+        fetchLocalApodData();
       };
 
     const handleFormSelection = (e) => {
@@ -83,12 +94,9 @@ function FormsPage() {
     };
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
+      const { name, value } = e.target;
+      setFormData({ [name]: value });
+  };
 
     return (
         <Container fluid className="justify-content-center">
